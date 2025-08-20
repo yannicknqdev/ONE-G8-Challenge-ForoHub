@@ -2,6 +2,7 @@ package com.alura.forohub.controller;
 
 import com.alura.forohub.domain.curso.Curso;
 import com.alura.forohub.domain.curso.CursoRepository;
+import com.alura.forohub.domain.topico.DatosActualizacionTopico;
 import com.alura.forohub.domain.topico.DatosDetalleTopico;
 import com.alura.forohub.domain.topico.DatosListadoTopico;
 import com.alura.forohub.domain.topico.DatosRegistroTopico;
@@ -19,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Sort;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/topicos")
@@ -82,6 +85,35 @@ public class TopicoController {
     public ResponseEntity<DatosDetalleTopico> detalleTopico(@PathVariable Long id) {
         Topico topico = topicoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tópico no encontrado con ID: " + id));
+        
+        return ResponseEntity.ok(new DatosDetalleTopico(topico));
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<DatosDetalleTopico> actualizarTopico(
+            @PathVariable Long id, 
+            @RequestBody @Valid DatosActualizacionTopico datos) {
+        
+        Optional<Topico> topicoOptional = topicoRepository.findById(id);
+        
+        if (!topicoOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        Topico topico = topicoOptional.get();
+        
+        // Verificar que no exista otro tópico con el mismo título y mensaje (excluyendo el actual)
+        if (topicoRepository.existsByTituloAndMensajeAndIdNot(datos.titulo(), datos.mensaje(), id)) {
+            throw new RuntimeException("Ya existe otro tópico con el mismo título y mensaje");
+        }
+        
+        // Buscar el curso
+        Curso curso = cursoRepository.findById(datos.cursoId())
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+        
+        // Actualizar el tópico
+        topico.actualizarDatos(datos, curso);
         
         return ResponseEntity.ok(new DatosDetalleTopico(topico));
     }
