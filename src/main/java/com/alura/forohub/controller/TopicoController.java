@@ -6,6 +6,7 @@ import com.alura.forohub.domain.topico.DatosActualizacionTopico;
 import com.alura.forohub.domain.topico.DatosDetalleTopico;
 import com.alura.forohub.domain.topico.DatosListadoTopico;
 import com.alura.forohub.domain.topico.DatosRegistroTopico;
+import com.alura.forohub.domain.topico.DatosRespuestaTopico;
 import com.alura.forohub.domain.topico.Topico;
 import com.alura.forohub.domain.topico.TopicoRepository;
 import com.alura.forohub.domain.usuario.Usuario;
@@ -38,11 +39,11 @@ public class TopicoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> registrarTopico(@RequestBody @Valid DatosRegistroTopico datos) {
+    public ResponseEntity<DatosRespuestaTopico> registrarTopico(@RequestBody @Valid DatosRegistroTopico datos) {
         
         // Verificar que no exista un tópico duplicado
         if (topicoRepository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
-            return ResponseEntity.badRequest().body("Ya existe un tópico con el mismo título y mensaje");
+            throw new RuntimeException("Ya existe un tópico con el mismo título y mensaje");
         }
         
         // Buscar el autor
@@ -57,7 +58,7 @@ public class TopicoController {
         Topico topico = new Topico(datos, autor, curso);
         topicoRepository.save(topico);
         
-        return ResponseEntity.ok("Tópico registrado exitosamente");
+        return ResponseEntity.ok(new DatosRespuestaTopico(topico));
     }
 
     @GetMapping

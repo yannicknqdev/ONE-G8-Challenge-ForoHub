@@ -167,6 +167,17 @@ Content-Type: application/json
 }
 ```
 
+**Respuesta:**
+```json
+{
+    "id": 4,
+    "nombre": "Nuevo Usuario",
+    "correoElectronico": "nuevo@email.com",
+    "perfil": "ESTUDIANTE",
+    "fechaRegistro": "2024-08-20T14:30:00"
+}
+```
+
 ### 2. Login
 
 ```http
@@ -198,6 +209,19 @@ Content-Type: application/json
     "mensaje": "Tengo dudas sobre la configuración de Spring Security en mi proyecto",
     "autorId": 1,
     "cursoId": 1
+}
+```
+
+**Respuesta:**
+```json
+{
+    "id": 1,
+    "titulo": "¿Cómo usar Spring Security?",
+    "mensaje": "Tengo dudas sobre la configuración de Spring Security en mi proyecto",
+    "fechaCreacion": "2024-08-20T14:35:00",
+    "status": "NO_RESPONDIDO",
+    "autor": "Juan Pérez",
+    "curso": "Spring Boot Básico"
 }
 ```
 

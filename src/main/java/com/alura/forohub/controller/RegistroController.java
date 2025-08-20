@@ -3,6 +3,7 @@ package com.alura.forohub.controller;
 import com.alura.forohub.domain.perfil.Perfil;
 import com.alura.forohub.domain.perfil.PerfilRepository;
 import com.alura.forohub.domain.usuario.DatosRegistroUsuario;
+import com.alura.forohub.domain.usuario.DatosRespuestaUsuario;
 import com.alura.forohub.domain.usuario.Usuario;
 import com.alura.forohub.domain.usuario.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -30,17 +31,17 @@ public class RegistroController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> registrarUsuario(@RequestBody @Valid DatosRegistroUsuario datos) {
+    public ResponseEntity<DatosRespuestaUsuario> registrarUsuario(@RequestBody @Valid DatosRegistroUsuario datos) {
         
         // Verificar que el email no exista
         if (usuarioRepository.existsByCorreoElectronico(datos.correoElectronico())) {
-            return ResponseEntity.badRequest().body("Ya existe un usuario con este correo electrónico");
+            throw new RuntimeException("Ya existe un usuario con este correo electrónico");
         }
         
         // Buscar el perfil ESTUDIANTE por defecto
         Perfil perfilEstudiante = perfilRepository.findByNombre("ESTUDIANTE");
         if (perfilEstudiante == null) {
-            return ResponseEntity.badRequest().body("Error: Perfil ESTUDIANTE no encontrado");
+            throw new RuntimeException("Error: Perfil ESTUDIANTE no encontrado");
         }
         
         // Encriptar la contraseña
@@ -50,6 +51,6 @@ public class RegistroController {
         Usuario nuevoUsuario = new Usuario(datos, perfilEstudiante, contrasenaEncriptada);
         usuarioRepository.save(nuevoUsuario);
         
-        return ResponseEntity.ok("Usuario registrado exitosamente");
+        return ResponseEntity.ok(new DatosRespuestaUsuario(nuevoUsuario));
     }
 }
