@@ -77,4 +77,16 @@ public class Usuario implements UserDetails {
         this.contrasena = contrasenaEncriptada;
         this.perfil = perfil;
     }
+    
+    public void actualizarDatos(DatosActualizacionUsuario datos, Perfil perfil) {
+        if (datos.nombre() != null) {
+            this.nombre = datos.nombre();
+        }
+        if (datos.correoElectronico() != null) {
+            this.correoElectronico = datos.correoElectronico();
+        }
+        if (perfil != null) {
+            this.perfil = perfil;
+        }
+    }
 }

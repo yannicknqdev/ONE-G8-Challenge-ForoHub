@@ -11,10 +11,15 @@ Un foro es un lugar donde los participantes pueden hacer preguntas sobre determi
 ### Funcionalidades Principales
 
 - ✅ **CRUD completo de tópicos**
+- ✅ **CRUD completo de usuarios**
+- ✅ **CRUD completo de respuestas**
 - ✅ **Sistema de autenticación JWT**
 - ✅ **Control de acceso y autorización**
 - ✅ **Validaciones de reglas de negocio**
 - ✅ **Paginación y filtros de búsqueda**
+- ✅ **Sistema de marcado de soluciones**
+- ✅ **Estadísticas y métricas**
+- ✅ **Búsqueda global**
 - ✅ **Manejo de errores y excepciones**
 
 ## 🛠️ Tecnologías Utilizadas
@@ -144,6 +149,7 @@ La API utiliza **JWT (JSON Web Tokens)** para autenticación.
 
 ### 🔒 Endpoints Protegidos (Requieren JWT)
 
+#### 📝 Gestión de Tópicos
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `POST` | `/topicos` | Crear nuevo tópico |
@@ -151,6 +157,31 @@ La API utiliza **JWT (JSON Web Tokens)** para autenticación.
 | `GET` | `/topicos/{id}` | Obtener tópico específico |
 | `PUT` | `/topicos/{id}` | Actualizar tópico |
 | `DELETE` | `/topicos/{id}` | Eliminar tópico |
+
+#### 👥 Gestión de Usuarios
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/usuarios` | Listar usuarios (con paginación) |
+| `GET` | `/usuarios/{id}` | Obtener usuario específico |
+| `PUT` | `/usuarios/{id}` | Actualizar usuario |
+| `DELETE` | `/usuarios/{id}` | Eliminar usuario |
+
+#### 💬 Gestión de Respuestas
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/respuestas` | Crear nueva respuesta |
+| `GET` | `/respuestas` | Listar respuestas (con filtros) |
+| `GET` | `/respuestas/{id}` | Obtener respuesta específica |
+| `PUT` | `/respuestas/{id}` | Actualizar respuesta |
+| `DELETE` | `/respuestas/{id}` | Eliminar respuesta |
+| `PATCH` | `/respuestas/{id}/solucion` | Marcar como solución |
+
+#### 📊 Funcionalidades Adicionales
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/estadisticas` | Estadísticas generales |
+| `GET` | `/estadisticas/resumen` | Resumen completo |
+| `GET` | `/buscar?q={termino}` | Búsqueda global |
 
 ## 🧪 Ejemplos de Uso
 
@@ -245,6 +276,49 @@ Content-Type: application/json
     "status": "SOLUCIONADO",
     "cursoId": 1
 }
+```
+
+### 6. Crear Respuesta
+
+```http
+POST http://localhost:8080/respuestas
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+Content-Type: application/json
+
+{
+    "mensaje": "Debes configurar el SecurityConfig correctamente",
+    "topicoId": 1,
+    "autorId": 2,
+    "solucion": false
+}
+```
+
+### 7. Listar Respuestas de un Tópico
+
+```http
+GET http://localhost:8080/respuestas?topicoId=1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+```
+
+### 8. Marcar Respuesta como Solución
+
+```http
+PATCH http://localhost:8080/respuestas/1/solucion
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+```
+
+### 9. Obtener Estadísticas
+
+```http
+GET http://localhost:8080/estadisticas
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+```
+
+### 10. Búsqueda Global
+
+```http
+GET http://localhost:8080/buscar?q=Spring
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 ```
 
 ## 🔍 Validaciones y Reglas de Negocio

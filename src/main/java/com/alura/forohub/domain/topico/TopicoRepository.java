@@ -19,4 +19,6 @@ public interface TopicoRepository extends JpaRepository<Topico, Long> {
     
     @Query("SELECT t FROM Topico t WHERE YEAR(t.fechaCreacion) = :anio")
     Page<Topico> findByAnio(@Param("anio") int anio, Pageable pageable);
+    
+    int countByAutorId(Long autorId);
 }
