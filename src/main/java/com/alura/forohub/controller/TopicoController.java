@@ -2,6 +2,7 @@ package com.alura.forohub.controller;
 
 import com.alura.forohub.domain.curso.Curso;
 import com.alura.forohub.domain.curso.CursoRepository;
+import com.alura.forohub.domain.topico.DatosListadoTopico;
 import com.alura.forohub.domain.topico.DatosRegistroTopico;
 import com.alura.forohub.domain.topico.Topico;
 import com.alura.forohub.domain.topico.TopicoRepository;
@@ -10,11 +11,13 @@ import com.alura.forohub.domain.usuario.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/topicos")
@@ -51,5 +54,26 @@ public class TopicoController {
         topicoRepository.save(topico);
         
         return ResponseEntity.ok("Tópico registrado exitosamente");
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<DatosListadoTopico>> listarTopicos(
+            @PageableDefault(size = 10, sort = "fechaCreacion", direction = Sort.Direction.ASC) Pageable paginacion,
+            @RequestParam(required = false) String curso,
+            @RequestParam(required = false) Integer anio) {
+        
+        Page<Topico> topicos;
+        
+        if (curso != null && anio != null) {
+            topicos = topicoRepository.findByCursoNombreAndAnio(curso, anio, paginacion);
+        } else if (curso != null) {
+            topicos = topicoRepository.findByCursoNombre(curso, paginacion);
+        } else if (anio != null) {
+            topicos = topicoRepository.findByAnio(anio, paginacion);
+        } else {
+            topicos = topicoRepository.findAll(paginacion);
+        }
+        
+        return ResponseEntity.ok(topicos.map(DatosListadoTopico::new));
     }
 }
