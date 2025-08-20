@@ -21,11 +21,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Sort;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/topicos")
+@Tag(name = "Tópicos", description = "Operaciones relacionadas con la gestión de tópicos del foro")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TopicoController {
 
     @Autowired
@@ -39,7 +47,14 @@ public class TopicoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<DatosRespuestaTopico> registrarTopico(@RequestBody @Valid DatosRegistroTopico datos) {
+    @Operation(summary = "Crear un nuevo tópico", description = "Registra un nuevo tópico en el foro")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tópico creado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos o tópico duplicado"),
+        @ApiResponse(responseCode = "401", description = "No autorizado - Token JWT requerido")
+    })
+    public ResponseEntity<DatosRespuestaTopico> registrarTopico(
+            @Parameter(description = "Datos del tópico a crear") @RequestBody @Valid DatosRegistroTopico datos) {
         
         // Verificar que no exista un tópico duplicado
         if (topicoRepository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
@@ -62,10 +77,15 @@ public class TopicoController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar tópicos", description = "Obtiene una lista paginada de tópicos con filtros opcionales")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de tópicos obtenida exitosamente"),
+        @ApiResponse(responseCode = "401", description = "No autorizado - Token JWT requerido")
+    })
     public ResponseEntity<Page<DatosListadoTopico>> listarTopicos(
-            @PageableDefault(size = 10, sort = "fechaCreacion", direction = Sort.Direction.ASC) Pageable paginacion,
-            @RequestParam(required = false) String curso,
-            @RequestParam(required = false) Integer anio) {
+            @Parameter(description = "Configuración de paginación") @PageableDefault(size = 10, sort = "fechaCreacion", direction = Sort.Direction.ASC) Pageable paginacion,
+            @Parameter(description = "Filtrar por nombre del curso") @RequestParam(required = false) String curso,
+            @Parameter(description = "Filtrar por año") @RequestParam(required = false) Integer anio) {
         
         Page<Topico> topicos;
         
@@ -83,7 +103,14 @@ public class TopicoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DatosDetalleTopico> detalleTopico(@PathVariable Long id) {
+    @Operation(summary = "Obtener detalle de tópico", description = "Obtiene los detalles de un tópico específico")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tópico encontrado"),
+        @ApiResponse(responseCode = "404", description = "Tópico no encontrado"),
+        @ApiResponse(responseCode = "401", description = "No autorizado - Token JWT requerido")
+    })
+    public ResponseEntity<DatosDetalleTopico> detalleTopico(
+            @Parameter(description = "ID del tópico") @PathVariable Long id) {
         Topico topico = topicoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tópico no encontrado con ID: " + id));
         
@@ -92,9 +119,16 @@ public class TopicoController {
 
     @PutMapping("/{id}")
     @Transactional
+    @Operation(summary = "Actualizar tópico", description = "Actualiza los datos de un tópico existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tópico actualizado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Tópico no encontrado"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos o tópico duplicado"),
+        @ApiResponse(responseCode = "401", description = "No autorizado - Token JWT requerido")
+    })
     public ResponseEntity<DatosDetalleTopico> actualizarTopico(
-            @PathVariable Long id, 
-            @RequestBody @Valid DatosActualizacionTopico datos) {
+            @Parameter(description = "ID del tópico") @PathVariable Long id, 
+            @Parameter(description = "Nuevos datos del tópico") @RequestBody @Valid DatosActualizacionTopico datos) {
         
         Optional<Topico> topicoOptional = topicoRepository.findById(id);
         
@@ -121,7 +155,14 @@ public class TopicoController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> eliminarTopico(@PathVariable Long id) {
+    @Operation(summary = "Eliminar tópico", description = "Elimina un tópico del sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Tópico eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Tópico no encontrado"),
+        @ApiResponse(responseCode = "401", description = "No autorizado - Token JWT requerido")
+    })
+    public ResponseEntity<Void> eliminarTopico(
+            @Parameter(description = "ID del tópico") @PathVariable Long id) {
         Optional<Topico> topicoOptional = topicoRepository.findById(id);
         
         if (!topicoOptional.isPresent()) {

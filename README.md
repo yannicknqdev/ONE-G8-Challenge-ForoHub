@@ -39,6 +39,7 @@ Un foro es un lugar donde los participantes pueden hacer preguntas sobre determi
 - **Flyway** - Para migraciones de base de datos
 - **Lombok** - Para reducir código boilerplate
 - **Auth0 JWT** - Para manejo de tokens JWT
+- **SpringDoc OpenAPI** - Para documentación automática de la API
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -119,6 +120,45 @@ mvn spring-boot:run
 ```
 
 4. **La API estará disponible en**: `http://localhost:8080`
+
+## 📚 Documentación de la API
+
+### Swagger UI
+
+La API incluye documentación interactiva con **Swagger UI** que permite:
+
+- 📖 **Explorar todos los endpoints** disponibles
+- 🧪 **Probar la API directamente** desde el navegador
+- 🔐 **Autenticación JWT integrada** para endpoints protegidos
+- 📋 **Esquemas detallados** de requests y responses
+
+**🌐 Acceso a Swagger UI:**
+```
+http://localhost:8080/swagger-ui.html
+```
+
+**📄 Documentación JSON:**
+```
+http://localhost:8080/api-docs
+```
+
+### Cómo usar Swagger UI
+
+1. **Iniciar la aplicación** (`mvn spring-boot:run`)
+2. **Abrir navegador** en `http://localhost:8080/swagger-ui.html`
+3. **Registrar usuario** o **hacer login** para obtener token
+4. **Hacer clic en "Authorize"** 🔒 (botón verde en la parte superior)
+5. **Ingresar token** en formato: `Bearer tu_token_jwt_aqui`
+6. **Probar endpoints** directamente desde la interfaz
+
+### Funcionalidades de Swagger
+
+- ✅ **Autenticación JWT** configurada
+- ✅ **Descripciones detalladas** de cada endpoint
+- ✅ **Ejemplos de requests** y responses
+- ✅ **Validaciones documentadas**
+- ✅ **Códigos de respuesta** explicados
+- ✅ **Filtros y parámetros** documentados
 
 ## 🔐 Autenticación
 

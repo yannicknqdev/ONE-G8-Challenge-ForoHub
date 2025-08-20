@@ -12,12 +12,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/buscar")
+@Tag(name = "Búsqueda", description = "Operaciones de búsqueda global en el foro")
+@SecurityRequirement(name = "Bearer Authentication")
 public class BusquedaController {
 
     @Autowired
@@ -27,9 +35,15 @@ public class BusquedaController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping
+    @Operation(summary = "Búsqueda global", description = "Realiza una búsqueda global en usuarios y tópicos")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Parámetro de búsqueda requerido"),
+        @ApiResponse(responseCode = "401", description = "No autorizado - Token JWT requerido")
+    })
     public ResponseEntity<Map<String, Object>> busquedaGlobal(
-            @RequestParam String q,
-            @PageableDefault(size = 5) Pageable paginacion) {
+            @Parameter(description = "Término de búsqueda", required = true) @RequestParam String q,
+            @Parameter(description = "Configuración de paginación") @PageableDefault(size = 5) Pageable paginacion) {
         
         Map<String, Object> resultados = new HashMap<>();
         
