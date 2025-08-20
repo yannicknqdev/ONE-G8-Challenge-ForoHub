@@ -15,8 +15,11 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.secret:mi-secret}")
+    @Value("${api.security.token.secret}")
     private String secret;
+    
+    @Value("${api.security.token.expiration}")
+    private String expiration;
 
     public String generarToken(Usuario usuario) {
         try {
@@ -45,6 +48,8 @@ public class TokenService {
     }
 
     private Instant generarFechaExpiracion() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-05:00"));
+        // Convierte milisegundos a horas para la expiración
+        long expirationHours = Long.parseLong(expiration) / (1000 * 60 * 60);
+        return LocalDateTime.now().plusHours(expirationHours).toInstant(ZoneOffset.of("-05:00"));
     }
 }
