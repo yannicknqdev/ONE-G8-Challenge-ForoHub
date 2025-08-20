@@ -2,6 +2,7 @@ package com.alura.forohub.controller;
 
 import com.alura.forohub.domain.curso.Curso;
 import com.alura.forohub.domain.curso.CursoRepository;
+import com.alura.forohub.domain.topico.DatosDetalleTopico;
 import com.alura.forohub.domain.topico.DatosListadoTopico;
 import com.alura.forohub.domain.topico.DatosRegistroTopico;
 import com.alura.forohub.domain.topico.Topico;
@@ -75,5 +76,13 @@ public class TopicoController {
         }
         
         return ResponseEntity.ok(topicos.map(DatosListadoTopico::new));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DatosDetalleTopico> detalleTopico(@PathVariable Long id) {
+        Topico topico = topicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tópico no encontrado con ID: " + id));
+        
+        return ResponseEntity.ok(new DatosDetalleTopico(topico));
     }
 }
