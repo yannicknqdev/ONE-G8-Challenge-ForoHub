@@ -136,6 +136,7 @@ La API incluye documentación interactiva con **Swagger UI** que permite:
 ```
 http://localhost:8080/swagger-ui.html
 ```
+<img width="1360" height="674" alt="image" src="https://github.com/user-attachments/assets/c2c80b30-ccdd-484c-8a55-96d034ae7c89" />
 
 **📄 Documentación JSON:**
 ```
