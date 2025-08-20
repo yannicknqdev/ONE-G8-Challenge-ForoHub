@@ -70,4 +70,11 @@ public class Usuario implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    
+    public Usuario(DatosRegistroUsuario datos, Perfil perfil, String contrasenaEncriptada) {
+        this.nombre = datos.nombre();
+        this.correoElectronico = datos.correoElectronico();
+        this.contrasena = contrasenaEncriptada;
+        this.perfil = perfil;
+    }
 }
